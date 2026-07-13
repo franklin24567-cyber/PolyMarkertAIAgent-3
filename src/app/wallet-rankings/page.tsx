@@ -7,13 +7,27 @@ export default function WalletRankingsPage() {
       <table className="w-full text-sm">
         <thead>
           <tr className="text-left text-zinc-500">
-            <th>Rank</th><th>Wallet</th><th>ROI</th><th>Consistency</th><th>Copyability</th><th>Penalty</th><th>Best Category</th><th>Status</th>
+            <th>Rank</th>
+            <th>Wallet</th>
+            <th>ROI</th>
+            <th>Consistency</th>
+            <th>Copyability</th>
+            <th>Penalty</th>
+            <th>Best Category</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
           {dashboardData.wallets.map((wallet) => (
             <tr key={wallet.address} className="border-t">
-              <td>{wallet.sourceRank}</td><td>{wallet.address}</td><td>{wallet.roi30d}</td><td>{wallet.consistency}</td><td>{wallet.copyability}</td><td>{(wallet.oneHitProfitShare * 100).toFixed(0)}%</td><td>{wallet.category}</td><td>{wallet.status}</td>
+              <td>{wallet.sourceRank}</td>
+              <td>{wallet.address}</td>
+              <td>{wallet.roi30d}</td>
+              <td>{wallet.consistency}</td>
+              <td>{wallet.copyability}</td>
+              <td>{(wallet.oneHitProfitShare * 100).toFixed(0)}%</td>
+              <td>{wallet.category}</td>
+              <td>{wallet.status}</td>
             </tr>
           ))}
         </tbody>

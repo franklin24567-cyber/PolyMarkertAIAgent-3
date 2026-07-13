@@ -1,6 +1,6 @@
 import { compareBenchmarks } from "@/lib/benchmark";
-import { createPaperTrade } from "@/lib/paper-trading";
 import { DEFAULT_RULES } from "@/lib/defaults";
+import { createPaperTrade } from "@/lib/paper-trading";
 import { decisionFromScore, scoreTrade, scoreWallet } from "@/lib/scoring";
 
 const wallets = [
@@ -36,9 +36,9 @@ const wallets = [
   },
 ];
 
-const scoredWallets = wallets.map((w, index) => ({
-  ...w,
-  globalScore: scoreWallet(w),
+const scoredWallets = wallets.map((wallet, index) => ({
+  ...wallet,
+  globalScore: scoreWallet(wallet),
   sourceRank: index + 1,
 }));
 
@@ -106,36 +106,42 @@ const benchmark = compareBenchmarks({
   skipped: [-0.8, 1.4, -1.2],
 });
 
+const paperTrades = decisions
+  .map((decision) => {
+    const trade = createPaperTrade({
+      decision: decision.decision,
+      confidence: decision.score / 100,
+      entryPrice: decision.walletEntryPrice,
+      currentPrice: decision.currentPrice,
+      side: decision.side,
+    });
+
+    if (!trade) {
+      return null;
+    }
+
+    return {
+      marketQuestion: decision.marketQuestion,
+      status: "open",
+      simulatedPositionSize: trade.simulatedPositionSize,
+      pnl: trade.unrealizedPnl,
+      side: trade.side,
+    };
+  })
+  .filter((trade): trade is NonNullable<typeof trade> => trade !== null);
+
 export const dashboardData = {
   demoMode: true,
   totalPaperPnl: 6.3,
   winRate: 0.62,
   openPositions: 3,
-  activeTrackedWallets: scoredWallets.filter((w) => w.status === "track").length,
-  copyCandidatesToday: decisions.filter((d) => d.decision === "paper_copy").length,
+  activeTrackedWallets: scoredWallets.filter((wallet) => wallet.status === "track").length,
+  copyCandidatesToday: decisions.filter((decision) => decision.decision === "paper_copy").length,
   reportStatus: "ready",
   latestRuleChanges: ["Lowered max spread from 0.06 to 0.05 based on spread-heavy losses"],
   wallets: scoredWallets,
   decisions,
   benchmark,
   rules: DEFAULT_RULES,
-  paperTrades: decisions
-    .map((d) => ({
-      marketQuestion: d.marketQuestion,
-      trade: createPaperTrade({
-        decision: d.decision,
-        confidence: d.score / 100,
-        entryPrice: d.walletEntryPrice,
-        currentPrice: d.currentPrice,
-        side: d.side,
-      }),
-    }))
-    .filter((x) => x.trade !== null)
-    .map((x) => ({
-      marketQuestion: x.marketQuestion,
-      status: "open",
-      simulatedPositionSize: x.trade!.simulatedPositionSize,
-      pnl: x.trade!.unrealizedPnl,
-      side: x.trade!.side,
-    })),
+  paperTrades,
 };

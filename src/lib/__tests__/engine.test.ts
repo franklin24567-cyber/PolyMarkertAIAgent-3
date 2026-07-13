@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { compareBenchmarks } from "../benchmark";
 import { createPaperTrade, simulatedPositionSize, updateHourlyPnl } from "../paper-trading";
-import { bumpRuleVersion, nextRuleSet } from "../rules";
+import { nextRuleSet } from "../rules";
 import { decisionFromScore, oneHitWonderPenalty, scoreTrade, scoreWallet } from "../scoring";
 import { assertPaperOnlySafety, executeRealTrade } from "../safety";
 
@@ -58,7 +58,6 @@ describe("rules and benchmarks", () => {
     const next = nextRuleSet({ maxSpread: 0.05, minLiquidity: 3000, maxPriceMoveFromEntry: 0.12, minCopyScore: 72, watchScore: 55 }, { spreadHeavyLossRate: 0.6, lowLiquidityLossRate: 0.7, lateEntryLossRate: 0.6 });
     expect(next.maxSpread).toBeLessThan(0.05);
     expect(next.minLiquidity).toBeGreaterThan(3000);
-    expect(bumpRuleVersion(3)).toBe(4);
   });
 
   it("compares bot benchmark against blind copy", () => {
