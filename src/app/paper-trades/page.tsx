@@ -7,7 +7,7 @@ export default function PaperTradesPage() {
       {dashboardData.paperTrades.map((trade) => (
         <div key={trade.marketQuestion} className="mb-2 rounded-md border p-3 text-sm">
           <p className="font-medium">{trade.marketQuestion}</p>
-          <p>Simulated size: ${trade.simulatedPositionSize} | Status: {trade.status} | Hourly PnL: ${trade.pnl}</p>
+          <p>Side: {trade.side} | Simulated size: ${trade.simulatedPositionSize} | Status: {trade.status} | Hourly PnL: ${trade.pnl}</p>
         </div>
       ))}
     </main>

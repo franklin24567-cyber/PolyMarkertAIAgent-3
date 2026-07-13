@@ -53,6 +53,7 @@ const signals = [
     timeToResolutionHours: 48,
     thesisScore: 84,
     marketCategory: "Politics",
+    side: "YES" as const,
     wallet: scoredWallets[0],
   },
   {
@@ -65,6 +66,7 @@ const signals = [
     timeToResolutionHours: 180,
     thesisScore: 44,
     marketCategory: "Sports",
+    side: "NO" as const,
     wallet: scoredWallets[1],
   },
 ];
@@ -125,7 +127,7 @@ export const dashboardData = {
         confidence: d.score / 100,
         entryPrice: d.walletEntryPrice,
         currentPrice: d.currentPrice,
-        side: "YES",
+        side: d.side,
       }),
     }))
     .filter((x) => x.trade !== null)
@@ -134,5 +136,6 @@ export const dashboardData = {
       status: "open",
       simulatedPositionSize: x.trade!.simulatedPositionSize,
       pnl: x.trade!.unrealizedPnl,
+      side: x.trade!.side,
     })),
 };
