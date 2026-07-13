@@ -7,7 +7,10 @@ export async function runJob(name: string, run: () => Promise<void>) {
     await run();
     console.log(`[${name}] completed`);
   } catch (error) {
-    console.error(`[${name}] failed`, error);
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error(`[${name}] failed:`, message);
+    if (stack) console.error(stack);
     process.exitCode = 1;
   }
 }

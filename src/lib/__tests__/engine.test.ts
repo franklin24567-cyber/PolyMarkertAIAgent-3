@@ -40,7 +40,7 @@ describe("trade scoring and decisions", () => {
 
 describe("paper trading engine", () => {
   it("creates paper trade for paper_copy decisions", () => {
-    const trade = createPaperTrade({ decision: "paper_copy", confidence: 0.8, entryPrice: 0.4, currentPrice: 0.45, side: "YES" });
+    const trade = createPaperTrade({ decision: "paper_copy", confidence: 0.8, entryPrice: 0.4, currentPrice: 0.45, position: "YES" });
     expect(trade).not.toBeNull();
     expect(simulatedPositionSize(0.8)).toBeGreaterThanOrEqual(5);
     expect(simulatedPositionSize(0.8)).toBeLessThanOrEqual(20);

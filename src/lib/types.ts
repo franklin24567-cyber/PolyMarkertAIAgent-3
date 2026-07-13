@@ -37,5 +37,5 @@ export interface PaperTradeInput {
   confidence: number;
   entryPrice: number;
   currentPrice: number;
-  side: "YES" | "NO";
+  position: "YES" | "NO";
 }

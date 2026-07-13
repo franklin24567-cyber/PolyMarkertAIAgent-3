@@ -53,7 +53,7 @@ const signals = [
     timeToResolutionHours: 48,
     thesisScore: 84,
     marketCategory: "Politics",
-    side: "YES" as const,
+    position: "YES" as const,
     wallet: scoredWallets[0],
   },
   {
@@ -66,7 +66,7 @@ const signals = [
     timeToResolutionHours: 180,
     thesisScore: 44,
     marketCategory: "Sports",
-    side: "NO" as const,
+    position: "NO" as const,
     wallet: scoredWallets[1],
   },
 ];
@@ -107,13 +107,15 @@ const benchmark = compareBenchmarks({
 });
 
 const paperTrades = decisions
-  .map((decision) => {
+  .map((decisionRecord) => {
+    const { decision, score, walletEntryPrice, currentPrice, position, marketQuestion } = decisionRecord;
+
     const trade = createPaperTrade({
-      decision: decision.decision,
-      confidence: decision.score / 100,
-      entryPrice: decision.walletEntryPrice,
-      currentPrice: decision.currentPrice,
-      side: decision.side,
+      decision,
+      confidence: score / 100,
+      entryPrice: walletEntryPrice,
+      currentPrice,
+      position,
     });
 
     if (!trade) {
@@ -121,7 +123,7 @@ const paperTrades = decisions
     }
 
     return {
-      marketQuestion: decision.marketQuestion,
+      marketQuestion,
       status: "open",
       simulatedPositionSize: trade.simulatedPositionSize,
       pnl: trade.unrealizedPnl,

@@ -1,5 +1,6 @@
 import type { Decision, RuleConfig, TradeSignalInput, WalletMetrics } from "@/lib/types";
 
+// Penalize wallets whose 30d profit is concentrated in one trade (>35%), capped at 30 points.
 export function oneHitWonderPenalty(oneHitProfitShare: number): number {
   if (oneHitProfitShare <= 0.35) return 0;
   return Math.min(30, (oneHitProfitShare - 0.35) * 60);

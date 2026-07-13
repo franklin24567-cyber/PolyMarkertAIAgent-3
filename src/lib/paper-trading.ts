@@ -1,5 +1,6 @@
 import type { PaperTradeInput } from "@/lib/types";
 
+// Confidence (0-1) maps linearly to a $5-$20 simulated position size.
 export function simulatedPositionSize(confidence: number): number {
   const normalized = Math.max(0, Math.min(1, confidence));
   return Math.round((5 + normalized * 15) * 100) / 100;
@@ -11,9 +12,9 @@ export function createPaperTrade(input: PaperTradeInput) {
   return {
     entryPrice: input.entryPrice,
     currentPrice: input.currentPrice,
-    side: input.side,
+    side: input.position,
     simulatedPositionSize: size,
-    unrealizedPnl: pnlValue(input.entryPrice, input.currentPrice, size, input.side),
+    unrealizedPnl: pnlValue(input.entryPrice, input.currentPrice, size, input.position),
   };
 }
 
