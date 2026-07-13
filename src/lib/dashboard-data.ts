@@ -1,4 +1,5 @@
 import { compareBenchmarks } from "@/lib/benchmark";
+import { createPaperTrade } from "@/lib/paper-trading";
 import { DEFAULT_RULES } from "@/lib/defaults";
 import { decisionFromScore, scoreTrade, scoreWallet } from "@/lib/scoring";
 
@@ -117,6 +118,21 @@ export const dashboardData = {
   benchmark,
   rules: DEFAULT_RULES,
   paperTrades: decisions
-    .filter((d) => d.decision === "paper_copy")
-    .map((d) => ({ marketQuestion: d.marketQuestion, status: "open", simulatedPositionSize: 14.2, pnl: 1.4 })),
+    .map((d) => ({
+      marketQuestion: d.marketQuestion,
+      trade: createPaperTrade({
+        decision: d.decision,
+        confidence: d.score / 100,
+        entryPrice: d.walletEntryPrice,
+        currentPrice: d.currentPrice,
+        side: "YES",
+      }),
+    }))
+    .filter((x) => x.trade !== null)
+    .map((x) => ({
+      marketQuestion: x.marketQuestion,
+      status: "open",
+      simulatedPositionSize: x.trade!.simulatedPositionSize,
+      pnl: x.trade!.unrealizedPnl,
+    })),
 };

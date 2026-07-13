@@ -21,9 +21,9 @@ export function scoreWallet(wallet: WalletMetrics): number {
 
 export function scoreTrade(input: TradeSignalInput, rules: RuleConfig): number {
   const move = Math.abs(input.currentMarketPrice - input.walletEntryPrice);
-  const priceMovePenalty = move > rules.maxPriceMoveFromEntry ? (move - rules.maxPriceMoveFromEntry) * 100 : 0;
-  const spreadPenalty = input.spread > rules.maxSpread ? (input.spread - rules.maxSpread) * 100 : 0;
-  const liquidityPenalty = input.liquidity < rules.minLiquidity ? (rules.minLiquidity - input.liquidity) / 1000 : 0;
+  const priceMovePenalty = move > rules.maxPriceMoveFromEntry ? (move - rules.maxPriceMoveFromEntry) * 60 : 0;
+  const spreadPenalty = input.spread > rules.maxSpread ? (input.spread - rules.maxSpread) * 80 : 0;
+  const liquidityPenalty = input.liquidity < rules.minLiquidity ? ((rules.minLiquidity - input.liquidity) / rules.minLiquidity) * 20 : 0;
   const base =
     input.walletGlobalScore * 0.3 +
     input.walletCategoryScore * 0.2 +

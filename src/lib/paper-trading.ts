@@ -19,7 +19,7 @@ export function createPaperTrade(input: PaperTradeInput) {
 
 export function pnlValue(entryPrice: number, currentPrice: number, size: number, side: "YES" | "NO") {
   const direction = side === "YES" ? 1 : -1;
-  return Math.round(((currentPrice - entryPrice) * direction * size * 100) / entryPrice) / 100;
+  return Math.round((currentPrice - entryPrice) * direction * size * 100) / 100;
 }
 
 export function updateHourlyPnl(entryPrice: number, prices: number[], size: number, side: "YES" | "NO") {
