@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model LeaderboardScan {
+  id             String   @id @default(cuid())
+  source         String
+  scannedAt      DateTime
+  walletCount    Int
+  lookbackDays   Int
+  rawSummaryJson String
+}
+
+model WalletProfile {
+  id                    String   @id @default(cuid())
+  address               String   @unique
+  label                 String
+  sourceRank            Int
+  status                String
+  roi30d                Float
+  consistencyScore      Float
+  copyabilityScore      Float
+  oneHitWonderPenalty   Float
+  globalScore           Float
+  bestCategory          String
+  categoryStrengthsJson String
+  averageTradeSize      Float
+  tradeCount30d         Int
+  resolvedTradeCount30d Int
+  winRate30d            Float
+  averageLiquidity      Float
+  averageSpread         Float
+  averageEntryTiming    Float
+  copyabilityNotes      String
+  riskNotes             String
+  lastScannedAt         DateTime
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  observedTrades ObservedTrade[]
+}
+
+model ObservedTrade {
+  id               String   @id @default(cuid())
+  walletAddress    String
+  marketId         String
+  conditionId      String
+  marketQuestion   String
+  marketCategory   String
+  outcome          String
+  side             String
+  walletEntryPrice Float
+  detectedPrice    Float
+  size             Float
+  timestamp        DateTime
+  rawTradeJson     String
+  createdAt        DateTime @default(now())
+
+  walletProfile WalletProfile @relation(fields: [walletAddress], references: [address], onDelete: Cascade)
+  decisions     DecisionJournal[]
+}
+
+model MarketSnapshot {
+  id               String   @id @default(cuid())
+  marketId         String
+  conditionId      String
+  question         String
+  category         String
+  yesPrice         Float
+  noPrice          Float
+  bestBid          Float
+  bestAsk          Float
+  spread           Float
+  liquidity        Float
+  volume           Float
+  timeToResolution Int
+  collectedAt      DateTime
+  rawMarketJson    String
+}
+
+model DecisionJournal {
+  id                    String   @id @default(cuid())
+  observedTradeId       String
+  walletAddress         String
+  marketId              String
+  decision              String
+  copyScore             Float
+  confidence            Float
+  reasonsJson           String
+  risksJson             String
+  walletQualityScore    Float
+  roiScore              Float
+  consistencyScore      Float
+  copyabilityScore      Float
+  categoryFitScore      Float
+  entryTimingScore      Float
+  spreadScore           Float
+  liquidityScore        Float
+  thesisScore           Float
+  simulatedPositionSize Float
+  createdAt             DateTime @default(now())
+
+  observedTrade ObservedTrade @relation(fields: [observedTradeId], references: [id], onDelete: Cascade)
+  paperTrades   PaperTrade[]
+  reviews       OutcomeReview[]
+}
+
+model PaperTrade {
+  id                    String   @id @default(cuid())
+  decisionJournalId     String
+  walletAddress         String
+  marketId              String
+  outcome               String
+  side                  String
+  entryPrice            Float
+  currentPrice          Float
+  simulatedPositionSize Float
+  unrealizedPnl         Float
+  realizedPnl           Float
+  status                String
+  openedAt              DateTime
+  closedAt              DateTime?
+  resolvedAt            DateTime?
+
+  decisionJournal DecisionJournal @relation(fields: [decisionJournalId], references: [id], onDelete: Cascade)
+  snapshots      PnlSnapshot[]
+  reviews        OutcomeReview[]
+}
+
+model PnlSnapshot {
+  id          String   @id @default(cuid())
+  paperTradeId String
+  price       Float
+  pnl         Float
+  collectedAt DateTime
+
+  paperTrade PaperTrade @relation(fields: [paperTradeId], references: [id], onDelete: Cascade)
+}
+
+model OutcomeReview {
+  id               String   @id @default(cuid())
+  decisionJournalId String
+  paperTradeId     String
+  reviewTime       DateTime
+  priceAfter1h     Float
+  priceAfter6h     Float
+  priceAfter24h    Float
+  finalOutcome     String
+  simulatedPnl     Float
+  wasDecisionGood  Boolean
+  lessonsJson      String
+  createdAt        DateTime @default(now())
+
+  decisionJournal DecisionJournal @relation(fields: [decisionJournalId], references: [id], onDelete: Cascade)
+  paperTrade      PaperTrade @relation(fields: [paperTradeId], references: [id], onDelete: Cascade)
+}
+
+model RuleSet {
+  id        String   @id @default(cuid())
+  version   Int      @unique
+  active    Boolean  @default(false)
+  rulesJson String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  oldChanges RuleChange[] @relation("OldRuleSet")
+  newChanges RuleChange[] @relation("NewRuleSet")
+}
+
+model RuleChange {
+  id              String   @id @default(cuid())
+  oldRuleSetId    String
+  newRuleSetId    String
+  changedBy       String
+  reason          String
+  evidenceSummary String
+  beforeJson      String
+  afterJson       String
+  createdAt       DateTime @default(now())
+
+  oldRuleSet RuleSet @relation("OldRuleSet", fields: [oldRuleSetId], references: [id], onDelete: Cascade)
+  newRuleSet RuleSet @relation("NewRuleSet", fields: [newRuleSetId], references: [id], onDelete: Cascade)
+}
+
+model DailyReport {
+  id               String   @id @default(cuid())
+  date             DateTime @unique
+  paperPnl         Float
+  winRate          Float
+  openPositions    Int
+  newSignals       Int
+  copiedSignals    Int
+  watchedSignals   Int
+  skippedSignals   Int
+  bestWalletsJson  String
+  worstWalletsJson String
+  ruleChangesJson  String
+  summary          String
+  sentToTelegram   Boolean  @default(false)
+  createdAt        DateTime @default(now())
+}

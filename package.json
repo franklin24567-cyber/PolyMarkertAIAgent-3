@@ -1,0 +1,41 @@
+{
+  "name": "hermes-polymarket-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "vitest run",
+    "db:migrate": "prisma db push",
+    "seed": "tsx src/cli/seed.ts",
+    "scan:leaderboard": "tsx src/cli/scan-leaderboard.ts",
+    "scan:wallets": "tsx src/cli/scan-wallets.ts",
+    "monitor:trades": "tsx src/cli/monitor-trades.ts",
+    "score:trades": "tsx src/cli/score-trades.ts",
+    "paper:update-pnl": "tsx src/cli/paper-update-pnl.ts",
+    "review:outcomes": "tsx src/cli/review-outcomes.ts",
+    "update:rules": "tsx src/cli/update-rules.ts",
+    "report:daily": "tsx src/cli/report-daily.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.1",
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "prisma": "^6.16.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.3",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}
