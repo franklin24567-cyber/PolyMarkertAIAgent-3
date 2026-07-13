@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { compareBenchmarks } from "@/lib/benchmark";
-import { createPaperTrade, simulatedPositionSize, updateHourlyPnl } from "@/lib/paper-trading";
-import { bumpRuleVersion, nextRuleSet } from "@/lib/rules";
-import { decisionFromScore, oneHitWonderPenalty, scoreTrade, scoreWallet } from "@/lib/scoring";
-import { assertPaperOnlySafety, executeRealTrade } from "@/lib/safety";
+import { compareBenchmarks } from "../benchmark";
+import { createPaperTrade, simulatedPositionSize, updateHourlyPnl } from "../paper-trading";
+import { bumpRuleVersion, nextRuleSet } from "../rules";
+import { decisionFromScore, oneHitWonderPenalty, scoreTrade, scoreWallet } from "../scoring";
+import { assertPaperOnlySafety, executeRealTrade } from "../safety";
 
 describe("wallet scoring", () => {
   it("scores wallet with balanced inputs", () => {
